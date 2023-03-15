@@ -1,0 +1,197 @@
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>无标题文档</title>
+    <link href="css/tail.css" rel="stylesheet" type="text/css">
+    <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+</head>
+<body style="border-radius: 8px;width: 680px">
+<form>
+    <div class="top table2_top">
+        <div>
+            <div class="top_out">
+                <table class="table">
+                    <tbody>
+                    <tr>
+                        <td>问题名称<span>*</span></td>
+                        <td><input required type="text" minlength ="2" id="i1"></td>
+                        <td>所属环节<span>*</span></td>
+                        <td> <select id="i2" required>
+                            <option>生产</option>
+                            <option>运输</option>
+                            <option>储存</option>
+                            <option>销售</option>
+                        </select></td>
+                    </tr>
+                    <tr>
+                        <td>问题描述</td>
+                        <td colspan = "8" style="text-align: left"><textarea id="i3"></textarea></td>
+                    </tr>
+                    <tr>
+                        <td>发现时间</td>
+                        <td>
+                            <input type="date" id="i13" style="height: 25px">
+                        </td>
+                        <td>指派时间</td>
+                        <td>
+                            <input type="date" id="i5" style="height: 25px">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>所属企业</td>
+                        <td>
+                            <input type="text" id="i6">
+                        </td>
+                        <td>企业负责人</td>
+                        <td>
+                            <input type="text" id="i7">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>来源部门</td>
+                        <td><select id="i8">
+                            <option>四川省公安局</option>
+
+                        </select></td>
+                        <td>处理时间</td>
+                        <td><input type="date" class="find_input" id="i9" disabled="disabled" style="height: 25px"></td>
+                    </tr>
+                    <tr>
+                        <td>问题状态</td>
+                        <td><select id="i10">
+                            <option>未指派</option>
+                            <option>未处理</option>
+                            <option>已处理</option>
+                            <option>已关闭</option>
+                        </select></td>
+                        <td>关闭时间</td>
+                        <td><input type="date" id="i11" style="height: 25px"></td>
+                    </tr>
+                    <tr>
+                        <td>安全级别</td>
+                        <td>
+                            <select id="i4">
+                                <option>特大</option>
+                                <option>极大</option>
+                                <option>一般</option>
+                                <option>微小</option>
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>处理结果</td>
+                        <td colspan = "8" style="text-align: left"><textarea id="i12" disabled="disabled"></textarea></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="notice_bot">
+            <div class="r_right but_p"><button class="but_save" onclick="save()">保存</button><button class="but_close" onclick="cancel()">关闭</button></div>
+        </div>
+    </div>
+</form>
+<script src="js/jquery-2.2.0.min.js"></script>
+<script src="js/bstable/js/bootstrap.min.js"></script>
+<script>
+
+    var type = sessionStorage.getItem("safeType");
+    var id = sessionStorage.getItem("safeId");
+
+    $(function (){
+        if (type == "update") {
+            $.ajax({
+                url:"safeHandle/getOne",
+                type:"post",
+                data:{id:id},
+                success:function (res){
+                    var safe = JSON.parse(res).data;
+
+                    $("#i1").val(safe.title);
+                    $("#i2").val(safe.link);
+                    $("#i3").val(safe.content);
+                    $("#i4").val(safe.level);
+                    $("#i5").val(safe.assignTime);
+                    $("#i6").val(safe.company);
+                    $("#i7").val(safe.person);
+                    $("#i8").val(safe.part);
+                    $("#i9").val(safe.handTime);
+                    $("#i10").val(safe.stats);
+                    $("#i11").val(safe.colseTime);
+                    $("#i12").val(safe.result);
+                    $("#i13").val(safe.discoverTime);
+                }
+            })
+        }
+    })
+
+    function cancel() {
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+    }
+    function save(){
+        if (type == "add"){
+            $.ajax({
+                url:"safeHandle/add",
+                type:"post",
+                data:{
+                    title:$("#i1").val(),
+                    link:$("#i2").val(),
+                    content:$("#i3").val(),
+                    level:$("#i4").val(),
+                    assignTime:$("#i5").val(),
+                    company:$("#i6").val(),
+                    person:$("#i7").val(),
+                    part:$("#i8").val(),
+                    handTime:$("#i9").val(),
+                    stats:$("#i10").val(),
+                    closeTime:$("#i11").val(),
+                    result:$("#i12").val(),
+                    discoverTime:$("#i13").val(),
+                },
+                success:function (res){
+                    var ss = JSON.parse(res);
+                    alert(ss.msg);
+                    cancel();
+                }
+            })
+        }
+
+        if (type=="update") {
+
+            console.log(2);
+            $.ajax({
+                url:"safeHandle/update",
+                type:"post",
+                dataType:"json",
+                data:{
+                    id:id,
+                    title:$("#i1").val(),
+                    link:$("#i2").val(),
+                    content:$("#i3").val(),
+                    level:$("#i4").val(),
+                    assignTime:$("#i5").val(),
+                    company:$("#i6").val(),
+                    person:$("#i7").val(),
+                    part:$("#i8").val(),
+                    handTime:$("#i9").val(),
+                    stats:$("#i10").val(),
+                    closeTime:$("#i11").val(),
+                    result:$("#i12").val(),
+                    discoverTime:$("#i13").val(),
+                },
+                success:function (res){
+                    console.log(res);
+                    alert(res.msg);
+                    cancel();
+                }
+            })
+        }
+
+    }
+</script>
+</body>
+</html>

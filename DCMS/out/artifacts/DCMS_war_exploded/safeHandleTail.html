@@ -1,0 +1,168 @@
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>无标题文档</title>
+    <link href="css/tail.css" rel="stylesheet" type="text/css">
+    <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+</head>
+<body style="border-radius: 8px;width: 680px">
+<form>
+    <div class="top table2_top">
+        <div>
+            <div class="top_out">
+                <table class="table">
+                    <tbody>
+                    <tr>
+                        <td>问题名称</td>
+                        <td><input type="text" minlength ="2" id="i1" disabled="disabled"></td>
+                        <td>所属环节</td>
+                        <td> <select disabled="disabled" id="i2">
+                            <option>生产</option>
+                            <option>运输</option>
+                            <option>储存</option>
+                            <option>销售</option>
+                        </select></td>
+                    </tr>
+                    <tr>
+                        <td>问题描述</td>
+                        <td colspan = "8" style="text-align: left"><textarea disabled="disabled" id="i3"></textarea></td>
+                    </tr>
+                    <tr>
+                        <td>发现时间</td>
+                        <td>
+                            <input type="date" disabled="disabled" id="i13" style="height: 25px">
+                        </td>
+                        <td>指派时间</td>
+                        <td>
+                            <input type="date" disabled="disabled" id="i5" style="height: 25px">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>所属企业</td>
+                        <td>
+                            <input type="text" disabled="disabled" id="i6">
+                        </td>
+                        <td>企业负责人</td>
+                        <td>
+                            <input type="text"  disabled="disabled" id="i7">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>来源部门</td>
+                        <td><select disabled="disabled" id="i8">
+                            <option>四川省公安局</option>
+
+                        </select></td>
+                        <td>处理时间</td>
+                        <td><input type="date" class="find_input" id="i9" style="height: 25px"></td>
+                    </tr>
+                    <tr>
+                        <td>问题状态</td>
+                        <td><select  disabled="disabled" id="i10">
+                            <option>未指派</option>
+                            <option>未处理</option>
+                            <option>已处理</option>
+                            <option>已关闭</option>
+                        </select></td>
+                        <td>关闭时间</td>
+                        <td><input type="date" disabled="disabled" id="i11" style="height: 25px"></td>
+                    </tr>
+                    <tr>
+                        <td>安全级别</td>
+                        <td>
+                            <select disabled="disabled" id="i4">
+                                <option>特大</option>
+                                <option>级大</option>
+                                <option>一般</option>
+                                <option>微小</option>
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>处理结果</td>
+                        <td colspan = "8" style="text-align: left"><textarea id="i12"></textarea></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="notice_bot">
+            <div class="r_right but_p"><button class="but_save" onclick="save()">保存</button><button class="but_close" onclick="Cancel()">关闭</button></div>
+        </div>
+    </div>
+</form>
+<script src="js/jquery-2.2.0.min.js"></script>
+<script src="js/bstable/js/bootstrap.min.js"></script>
+<script>
+    var url = window.location.search;
+    var id = url.split("?")[1].split("=")[1];
+    $(function (){
+        $.ajax({
+            url:"safeHandle/getOne",
+            type:"post",
+            data:{id:id},
+            success:function (res){
+                var safe = JSON.parse(res).data;
+
+                $("#i1").val(safe.title);
+                $("#i2").val(safe.link);
+                $("#i3").val(safe.content);
+                $("#i4").val(safe.level);
+                $("#i5").val(safe.assignTime);
+                $("#i6").val(safe.company);
+                $("#i7").val(safe.person);
+                $("#i8").val(safe.part);
+                $("#i9").val(safe.handTime);
+                $("#i10").val(safe.stats);
+                $("#i11").val(safe.colseTime);
+                $("#i12").val(safe.result);
+                $("#i13").val(safe.discoverTime);
+
+                if ($("#i10").val() !== "未处理") {
+                    $("#i9").attr("disabled","disabled");
+                    $("#i12").attr("disabled","disabled");
+                }
+            }
+        })
+    })
+
+
+    function Cancel() {
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+    }
+
+    function save(){
+
+        $.ajax({
+            url:"safeHandle/update",
+            type:"post",
+            dataType:"json",
+            data:{
+                id:id,
+                title:$("#i1").val(),
+                link:$("#i2").val(),
+                content:$("#i3").val(),
+                level:$("#i4").val(),
+                assignTime:$("#i5").val(),
+                company:$("#i6").val(),
+                person:$("#i7").val(),
+                part:$("#i8").val(),
+                handTime:$("#i9").val(),
+                stats:$("#i10").val(),
+                closeTime:$("#i11").val(),
+                result:$("#i12").val(),
+                discoverTime:$("#i13").val(),
+            },
+            success:function (res){
+                alert(res.msg);
+                Cancel();
+            }
+        })
+    }
+</script>
+</body>
+</html>
